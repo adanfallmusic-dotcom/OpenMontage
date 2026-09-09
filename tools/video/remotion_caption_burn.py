@@ -120,6 +120,29 @@ class RemotionCaptionBurn(BaseTool):
                     "correct replacement. Example: {\"cloud\": \"Claude\"}."
                 ),
             },
+            "caption_padding_bottom": {
+                "type": "integer",
+                "description": (
+                    "Distance in px from the bottom of the frame to the caption box. "
+                    "Default 80. Raise it for vertical social (TikTok/Reels) so captions "
+                    "clear the platform UI band."
+                ),
+            },
+            "caption_color": {
+                "type": "string",
+                "description": "Caption text color (hex). Defaults to white.",
+            },
+            "caption_background_color": {
+                "type": "string",
+                "description": (
+                    "Caption box background (hex or rgba). Defaults to a "
+                    "translucent black. Set it to carry a brand palette."
+                ),
+            },
+            "caption_font_family": {
+                "type": "string",
+                "description": "CSS font-family for captions. Set it to carry a brand typeface.",
+            },
             "overlays": {
                 "type": "array",
                 "description": (
@@ -198,11 +221,17 @@ class RemotionCaptionBurn(BaseTool):
                         trailing = raw[-1]
                     if fixed != raw and not fixed.endswith(trailing):
                         fixed = fixed + trailing
-                    captions.append({
+                    cap = {
                         "word": fixed,
                         "startMs": int(w["start"] * 1000),
                         "endMs": int(w["end"] * 1000),
-                    })
+                    }
+                    # CaptionOverlay soporta pageBreakAfter para forzar corte de
+                    # pagina en limites de frase o escena; hay que reenviarlo o
+                    # los subtitulos mezclan dos frases en un mismo cue.
+                    if w.get("pageBreakAfter"):
+                        cap["pageBreakAfter"] = True
+                    captions.append(cap)
             elif "text" in seg:
                 text_words = seg["text"].strip().split()
                 dur = seg["end"] - seg["start"]
@@ -273,6 +302,10 @@ class RemotionCaptionBurn(BaseTool):
         font_size: int,
         highlight_color: str,
         overlays: list[dict] | None = None,
+        caption_padding_bottom: int | None = None,
+        caption_color: str | None = None,
+        caption_background_color: str | None = None,
+        caption_font_family: str | None = None,
     ) -> ToolResult:
         root = self._find_remotion_root()
         if root is None:
@@ -312,13 +345,23 @@ class RemotionCaptionBurn(BaseTool):
 
         # Build props JSON
         props = {
-            "videoSrc": f"public/talking-head/{video_filename}",
+            # staticFile() resuelve relativo a public/; incluir el prefijo "public/"
+            # hace que Remotion lance TypeError. Ver remotion.dev/docs/staticfile-relative-paths
+            "videoSrc": f"talking-head/{video_filename}",
             "captions": captions,
             "overlays": overlays or [],
             "wordsPerPage": words_per_page,
             "fontSize": font_size,
             "highlightColor": highlight_color,
         }
+        if caption_padding_bottom is not None:
+            props["captionPaddingBottom"] = caption_padding_bottom
+        if caption_color:
+            props["captionColor"] = caption_color
+        if caption_background_color:
+            props["captionBackgroundColor"] = caption_background_color
+        if caption_font_family:
+            props["captionFontFamily"] = caption_font_family
         props_dir = root / "public" / "demo-props"
         props_dir.mkdir(parents=True, exist_ok=True)
         props_file = props_dir / f"caption-burn-{Path(input_path).stem}.json"
@@ -473,6 +516,10 @@ class RemotionCaptionBurn(BaseTool):
             return ToolResult(success=False, error="No caption words extracted.")
 
         overlays = inputs.get("overlays")
+        caption_padding_bottom = inputs.get("caption_padding_bottom")
+        caption_color = inputs.get("caption_color")
+        caption_background_color = inputs.get("caption_background_color")
+        caption_font_family = inputs.get("caption_font_family")
 
         # Choose render method
         if not force_ffmpeg and self._remotion_available():
@@ -480,6 +527,10 @@ class RemotionCaptionBurn(BaseTool):
                 input_path, output_path, captions,
                 words_per_page, font_size, highlight_color,
                 overlays=overlays,
+                caption_padding_bottom=caption_padding_bottom,
+                caption_color=caption_color,
+                caption_background_color=caption_background_color,
+                caption_font_family=caption_font_family,
             )
         else:
             result = self._render_ffmpeg(input_path, output_path, captions)

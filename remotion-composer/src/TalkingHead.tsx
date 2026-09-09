@@ -7,6 +7,14 @@ import {
   useVideoConfig,
 } from "remotion";
 import { CaptionOverlay, WordCaption } from "./components/CaptionOverlay";
+import { loadFont as loadPlayfair } from "@remotion/google-fonts/PlayfairDisplay";
+import { loadFont as loadJost } from "@remotion/google-fonts/Jost";
+
+// Marca de perfumes: titulares en Playfair Display 700, textos en Jost 400.
+const { fontFamily: playfairFamily } = loadPlayfair("normal", { weights: ["700"] });
+const { fontFamily: jostFamily } = loadJost("normal", { weights: ["400"] });
+export const BRAND_TITLE_FONT = playfairFamily;
+export const BRAND_BODY_FONT = jostFamily;
 import { resolveAsset } from "./lib/resolveAsset";
 import { TextCard } from "./components/TextCard";
 import { StatCard } from "./components/StatCard";
@@ -45,6 +53,8 @@ export interface TalkingHeadOverlay {
   rightLabel?: string;
   leftValue?: string;
   rightValue?: string;
+  leftColor?: string;
+  rightColor?: string;
   chartData?: any[];
   chartSeries?: any[];
   chartColors?: string[];
@@ -62,6 +72,8 @@ export interface TalkingHeadOverlay {
   color?: string;
   accentColor?: string;
   fontSize?: number;
+  fontFamily?: string;
+  uppercase?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -122,6 +134,8 @@ const OverlayContent: React.FC<{ overlay: TalkingHeadOverlay }> = ({
         fontSize={overlay.fontSize}
         color={overlay.color}
         backgroundColor={bgColor}
+        {...(overlay.fontFamily ? { fontFamily: overlay.fontFamily } : {})}
+        {...(overlay.uppercase ? { uppercase: true } : {})}
       />
     );
   }
@@ -162,6 +176,9 @@ const OverlayContent: React.FC<{ overlay: TalkingHeadOverlay }> = ({
         title={overlay.title}
         backgroundColor={bgColor}
         textColor={overlay.color}
+        {...(overlay.leftColor ? { leftColor: overlay.leftColor } : {})}
+        {...(overlay.rightColor ? { rightColor: overlay.rightColor } : {})}
+        {...(overlay.fontFamily ? { fontFamily: overlay.fontFamily } : {})}
       />
     );
   }
@@ -284,7 +301,14 @@ const PositionedOverlay: React.FC<{ overlay: TalkingHeadOverlay }> = ({
       }}
     >
       {isFullOverlay && (
-        <AbsoluteFill style={{ background: "rgba(0, 0, 0, 0.7)" }} />
+        // El velo por defecto oscurece el metraje que queda detrás. Cuando el
+        // overlay trae su propio backgroundColor (una tarjeta de marca, o
+        // "transparent"), ese color manda: si no, tiñe de negro el diseño.
+        <AbsoluteFill
+          style={{
+            background: overlay.backgroundColor ?? "rgba(0, 0, 0, 0.7)",
+          }}
+        />
       )}
       <OverlayContent overlay={overlay} />
     </div>
@@ -308,6 +332,7 @@ export interface TalkingHeadProps {
   captionFontFamily?: string;
   // Pass "" for CJK captions (no inter-word spacing); defaults to " ".
   captionWordSeparator?: string;
+  captionPaddingBottom?: number;
 }
 
 export const TalkingHead: React.FC<TalkingHeadProps> = ({
@@ -321,6 +346,7 @@ export const TalkingHead: React.FC<TalkingHeadProps> = ({
   captionBackgroundColor = "rgba(0, 0, 0, 0.65)",
   captionFontFamily,
   captionWordSeparator,
+  captionPaddingBottom,
 }) => {
   const { fps } = useVideoConfig();
 
@@ -359,6 +385,7 @@ export const TalkingHead: React.FC<TalkingHeadProps> = ({
         color={captionColor}
         {...(captionFontFamily ? { fontFamily: captionFontFamily } : {})}
         {...(captionWordSeparator !== undefined ? { wordSeparator: captionWordSeparator } : {})}
+        {...(captionPaddingBottom !== undefined ? { paddingBottom: captionPaddingBottom } : {})}
       />
     </AbsoluteFill>
   );
