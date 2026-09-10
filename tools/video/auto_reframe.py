@@ -129,6 +129,25 @@ class AutoReframe(BaseTool):
     ]
 
     def execute(self, inputs: dict[str, Any]) -> ToolResult:
+        # Validate arguments before touching disk. BaseTool does not validate
+        # inputs against input_schema, so the declared enum is not enforced
+        # anywhere: passing "9:16" (which is NOT a preset name — the 9:16 preset
+        # is called "portrait") used to fall through to the raw crop size and
+        # hand back a 606x1080 file that looked like a 9:16 success.
+        # Explicit target_width/target_height still override the preset.
+        if not ("target_width" in inputs and "target_height" in inputs):
+            aspect = inputs.get("target_aspect", "portrait")
+            if aspect not in ASPECT_PRESETS:
+                return ToolResult(
+                    success=False,
+                    error=(
+                        f"Unknown target_aspect {aspect!r}. "
+                        f"Valid presets: {', '.join(sorted(ASPECT_PRESETS))}. "
+                        f"For 9:16 use 'portrait'. "
+                        f"Alternatively pass explicit target_width and target_height."
+                    ),
+                )
+
         input_path = Path(inputs["input_path"])
         if not input_path.exists():
             return ToolResult(success=False, error=f"Input not found: {input_path}")
@@ -174,6 +193,7 @@ class AutoReframe(BaseTool):
 
         # Build output path
         aspect_name = inputs.get("target_aspect", "portrait")
+
         output_path = Path(
             inputs.get("output_path", str(input_path.with_stem(f"{input_path.stem}_{aspect_name}")))
         )
