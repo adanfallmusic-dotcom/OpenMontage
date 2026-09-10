@@ -1,0 +1,78 @@
+# CENTINELA — playbook de MEDIDA, no de producción.
+#
+# Cada valor es único y feo a propósito. Si algo de esto NO aparece en pantalla,
+# es que la tubería lo está perdiendo por el camino y sustituyéndolo en silencio.
+#
+# Cómo se lee el resultado:
+#   titular en Bungee Shade  -> la tipografía llega     | en Inter -> SE PIERDE
+#   fondo magenta            -> el fondo llega          | oscuro   -> SE PIERDE
+#   texto verde              -> el texto llega          | blanco   -> SE PIERDE
+#   entradas de 0,9 s        -> el ritmo llega          | 0,6 s    -> SE PIERDE
+#
+# NO USAR PARA PRODUCIR NADA. Se mide con él y se guarda.
+
+identity:
+  name: "CENTINELA"
+  category: motion-graphics
+  mood: "chillón, inconfundible, deliberadamente feo"
+  pace: slow
+  best_for: "Medir qué valores del playbook sobreviven hasta la pantalla"
+
+visual_language:
+  color_palette:
+    primary: ["#FF6600", "#CC4400"]
+    accent: ["#00FFFF", "#00CCCC"]
+    background: "#FF00FF"
+    text: "#00FF00"
+    muted: "#9900FF"
+  composition: "centrado, todo enorme, sin sutilezas"
+  texture: "plano, sin grano, sin ruido"
+
+typography:
+  headings:
+    font: "Bungee Shade"
+    weight: 400
+    tracking: "0.08em"
+  body:
+    font: "Special Elite"
+    weight: 400
+    line_height: 1.7
+  code:
+    font: "Nova Mono"
+    weight: 400
+  scale_system: golden
+  weight_matrix:
+    title: 400
+    heading: 400
+    body: 400
+    caption: 400
+
+motion:
+  transitions: ["cut", "fade"]
+  animation_style: "entradas lentas y largas, imposibles de confundir con las de fábrica"
+  pacing_rules:
+    min_scene_hold_seconds: 4.0
+    max_scene_hold_seconds: 9.0
+    text_card_hold_seconds: 5.0
+    stat_card_hold_seconds: 5.0
+    transition_duration_seconds: 1.5
+  entrance: "sube desde abajo, muy despacio"
+  exit: "se va hacia arriba, muy despacio"
+
+audio:
+  voice_style: "CENTINELA-VOZ"
+  music_mood: "CENTINELA-MUSICA"
+  music_volume: 0.11
+  sfx_style: "CENTINELA-SFX"
+  ducking_threshold_db: -22
+
+asset_generation:
+  image_prompt_prefix: "CENTINELA-PROMPT-4711,"
+  image_negative_prompt: "CENTINELA-NEGATIVO-4711"
+  diagram_style: "CENTINELA-DIAGRAMA"
+  consistency_anchors: ["CENTINELA-ANCLA-4711"]
+
+quality_rules:
+  - "Si el titular sale en Inter, la tipografía se está perdiendo"
+  - "Si el fondo no es magenta, la paleta se está perdiendo"
+  - "Si las entradas duran 0,6 s, el ritmo se está perdiendo"
