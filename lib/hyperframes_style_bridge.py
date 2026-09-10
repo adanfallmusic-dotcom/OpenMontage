@@ -97,17 +97,22 @@ def style_bridge(
     playbook_name = ""
 
     if playbook:
-        playbook_name = str(
-            playbook.get("name")
-            or playbook.get("id")
-            or playbook.get("display_name")
-            or ""
-        )
         vl = playbook.get("visual_language", {}) or {}
         palette = vl.get("color_palette", {}) or {}
         typo = playbook.get("typography", {}) or {}
         identity = playbook.get("identity", {}) or {}
         motion = playbook.get("motion", {}) or {}
+
+        # Name lives under `identity` in the current schema; older/custom
+        # playbooks placed it at the root. Prefer the schema key, fall back
+        # to the legacy locations so existing callers keep working.
+        playbook_name = str(
+            identity.get("name")
+            or playbook.get("name")
+            or playbook.get("id")
+            or playbook.get("display_name")
+            or ""
+        )
 
         bg = _first(palette.get("background"), css["--color-bg"])
         fg = _first(palette.get("text"), css["--color-fg"])
@@ -115,7 +120,11 @@ def style_bridge(
         primary = _first(palette.get("primary"), css["--color-primary"])
         secondary = _first(palette.get("secondary"), css["--color-secondary"])
         surface = _first(palette.get("surface"), css["--color-surface"])
-        muted = _first(palette.get("muted_text"), css["--color-muted"])
+        # Schema key is `muted`; legacy/custom playbooks used `muted_text`.
+        muted = _first(
+            palette.get("muted"),
+            _first(palette.get("muted_text"), css["--color-muted"]),
+        )
 
         # Pace lives under `identity` in the current schema; older/custom
         # playbooks placed it under `motion`. Prefer the schema key, fall back
