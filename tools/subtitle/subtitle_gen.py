@@ -55,6 +55,15 @@ class SubtitleGen(BaseTool):
             "output_path": {"type": "string"},
             "max_chars_per_line": {"type": "integer", "default": 42},
             "max_words_per_cue": {"type": "integer", "default": 8},
+            "max_gap_seconds": {
+                "type": "number",
+                "default": 0.7,
+                "description": (
+                    "Break a cue when the silence between two words is longer than this. "
+                    "Without it a cue can span a musical gap and merge unrelated sentences. "
+                    "Set to 0 to disable gap-based breaking."
+                ),
+            },
             "highlight_style": {
                 "type": "string",
                 "enum": ["none", "word_by_word", "karaoke"],
@@ -73,7 +82,7 @@ class SubtitleGen(BaseTool):
     }
 
     resource_profile = ResourceProfile(cpu_cores=1, ram_mb=128, vram_mb=0, disk_mb=10)
-    idempotency_key_fields = ["segments", "format", "max_words_per_cue"]
+    idempotency_key_fields = ["segments", "format", "max_words_per_cue", "max_gap_seconds"]
     side_effects = ["writes subtitle file to output_path"]
     user_visible_verification = [
         "Play video with generated subtitles and verify timing",
@@ -84,6 +93,7 @@ class SubtitleGen(BaseTool):
         fmt = inputs.get("format", "srt")
         max_words = inputs.get("max_words_per_cue", 8)
         max_chars = inputs.get("max_chars_per_line", 42)
+        max_gap = inputs.get("max_gap_seconds", 0.7)
         highlight_style = inputs.get("highlight_style", "none")
         output_path = inputs.get("output_path")
         corrections = inputs.get("corrections")
@@ -95,7 +105,7 @@ class SubtitleGen(BaseTool):
             segments = self._apply_corrections(segments, corrections)
 
         # Build cues from word-level timestamps
-        cues = self._build_cues(segments, max_words, max_chars)
+        cues = self._build_cues(segments, max_words, max_chars, max_gap)
 
         if fmt == "srt":
             content = self._render_srt(cues, highlight_style)
@@ -166,7 +176,8 @@ class SubtitleGen(BaseTool):
         return result
 
     def _build_cues(
-        self, segments: list[dict], max_words: int, max_chars: int
+        self, segments: list[dict], max_words: int, max_chars: int,
+        max_gap: float = 0.7,
     ) -> list[dict]:
         """Group words into display cues respecting max_words and max_chars."""
         # Collect all words with timestamps
@@ -194,7 +205,18 @@ class SubtitleGen(BaseTool):
             word_text = w["word"].strip()
             candidate = f"{buf_text} {word_text}".strip() if buf_text else word_text
 
-            if buf and (len(buf) >= max_words or len(candidate) > max_chars):
+            # A cue must also break on a real pause and at the end of a sentence.
+            # Without these two, words are chopped by count alone: a cue can span a
+            # musical gap of minutes and merge two unrelated sentences.
+            gap = float(w["start"]) - float(buf[-1]["end"]) if buf else 0.0
+            ends_sentence = bool(buf) and buf[-1]["word"].strip().endswith((".", "?", "!", "…"))
+
+            if buf and (
+                len(buf) >= max_words
+                or len(candidate) > max_chars
+                or (max_gap > 0 and gap > max_gap)
+                or ends_sentence
+            ):
                 cues.append({
                     "index": len(cues) + 1,
                     "start": buf[0]["start"],
