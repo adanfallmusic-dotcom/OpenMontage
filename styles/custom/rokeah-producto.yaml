@@ -1,0 +1,98 @@
+# ROKEAH — REEL DE PRODUCTO. La ley es references/reel-de-producto.md de la skill
+# produccion-cine. Misma marca que rokeah-educativo, LENGUAJE OPUESTO.
+#
+# Identidad de marca de ads-cinematicos/marca/ROKEAH/brand-profile.md (líneas 288-295).
+# Reglas de pieza de ads-cinematicos/CLAUDE.md y de las memorias del catálogo de reels.
+# Nada inventado. Lo no documentado va marcado REVISAR.
+#
+# 🔴 NO CRUZAR CON rokeah-educativo. Aquí la imagen SÍ se genera; allí está prohibida.
+
+identity:
+  name: "ROKEAH Producto"
+  category: cinematic
+  mood: "deseable y diseñado, como un tráiler; nunca naturalista"
+  pace: moderate
+  best_for: "Reels de producto de 28-30 s, 9:16, con historia y frasco protagonista"
+
+visual_language:
+  color_palette:
+    primary: ["#004D3F", "#00382D"]
+    accent: ["#E6B373"]
+    background: "#FCF1EA"
+    text: "#004D3F"
+    muted: "#7A8B84"                  # REVISAR: derivado del verde, no documentado
+  composition: >
+    Vertical 9:16. El frasco está EN el plano del gancho, aunque sea parcial.
+    Hero final de 4-6 s, nítido y entero. Cierre estándar SOBRE el hero:
+    logo y rokeah.com en y 1180-1400, base del frasco por encima del 60%.
+    Nunca una tarjeta de cierre aparte.
+  texture: "fotorrealista; LUT de la casa por pieza"
+
+typography:
+  headings:
+    font: "Playfair Display"
+    weight: 700
+    tracking: "-0.01em"
+  body:
+    font: "Jost"
+    weight: 400
+    line_height: 1.5
+  code:
+    font: "Jost"
+    weight: 400
+  weight_matrix:
+    title: 700
+    heading: 700
+    body: 400
+    caption: 500
+
+motion:
+  transitions: ["cut", "fade"]
+  animation_style: "cortes al beat; cámara con intención narrativa, no efectista"
+  pacing_rules:
+    min_scene_hold_seconds: 1.5
+    max_scene_hold_seconds: 6.0
+    text_card_hold_seconds: 2.5
+    stat_card_hold_seconds: 2.5
+    transition_duration_seconds: 0.3
+  entrance: "entra ya dentro de la escena, sin presentación"
+  exit: "descansa en el hero: 4-6 s enteros, sin cortar"
+
+audio:
+  voice_style: "cercana, de marca; nunca locutor de anuncio"
+  music_mood: "generada con IA; sostiene la historia sin taparla"
+  music_volume: 0.22                  # REVISAR: no hay dB documentado para ROKEAH
+  sfx_style: "🔴 un SFX sin imagen que lo justifique NO se pone"
+  ducking_threshold_db: 0             # el ducking de audio_mixer está ROTO
+  voice_variation_allowed: false
+
+asset_generation:
+  image_prompt_prefix: >
+    Fotorrealista, indistinguible de una toma real, revisado a resolución completa.
+    La vara es alta: si se nota generado, no vale. El frasco es un objeto real de
+    catálogo: su etiqueta, forma y color no se inventan.
+  image_negative_prompt: >
+    nada de rostros deformes, manos mal, etiquetas ilegibles, texto inventado en
+    el frasco, logos alterados
+  diagram_style: "no aplica"
+  consistency_anchors:
+    - "ficha de personaje con sus 5 zonas completas, nunca reducida"
+    - "lámina ancla de escenario por pieza, aprobada antes de animar"
+    - "cierre estándar sobre el hero, idéntico en todas las piezas"
+  multi_image_per_scene: false
+
+quality_rules:
+  - "El producto es el MENTOR de la historia, no el héroe."
+  - "El frasco está en el plano del gancho, aunque sea parcial."
+  - "Hero final de 4-6 s, nítido y entero."
+  - "🔴 ANTI-PLANTILLA: prohibido repetir «duda → elige frasco → sale → reacción». Se rota el dispositivo narrativo y se presentan 2-3 conceptos distintos."
+  - "Casting por identificación: la actriz con la que se identifica la compradora, no una modelo. No repetir cara entre piezas."
+  - "Dos paradas de aprobación: storyboard y láminas ancla, ANTES de animar. Ahí es donde se gasta el dinero."
+  - "🔴 Seedance-2.5 RECHAZA rostros fotorrealistas (probado 25-ago-2026). Diálogo con labios va con Veo y --audio."
+  - "Un efecto de sonido sin imagen que lo justifique no se pone."
+  - "Se publica la versión LARGA de ~28-30 s. El corte de 15 s no se usa."
+  - "🔴 Nunca decir «sourced from authorized distributors» ni afirmar que somos distribuidor autorizado."
+  - "Nunca afirmar que un perfume nuestro es o clona un designer nombrándolo."
+  - "El precio de envío se consulta en Shopify EL MISMO DÍA de publicar."
+  - "Los logos se reencuadran y escalan entre colorways oficiales, pero NUNCA se regeneran ni se alteran con IA."
+  - "Antes de entregar se pasa qa_zonas: la web no puede quedar tapada."

@@ -1,0 +1,99 @@
+# ROKEAH — EDUCATIVO. La ley es RECETA-ROKEAH-v11.md, «la del vídeo que sí funcionó».
+#
+# Identidad de marca (colores, fuentes, cierre) tomada de
+# ads-cinematicos/marca/ROKEAH/brand-profile.md, líneas 288-295.
+# Reglas de montaje tomadas de RECETA-ROKEAH-v11.md, «Las cinco reglas».
+# Nada inventado. Lo no documentado va marcado REVISAR.
+#
+# 🔴 ESTE PLAYBOOK Y rokeah-producto COMPARTEN MARCA PERO NO LENGUAJE.
+#    Educativo = metraje real, cero IA. Producto = imagen generada. No cruzarlos.
+
+identity:
+  name: "ROKEAH Educativo"
+  category: cinematic
+  mood: "claro, sin vender; enseña y deja una pregunta"
+  pace: moderate
+  best_for: "Piezas educativas de perfumería sobre metraje real de archivo, sin CTA de venta"
+
+visual_language:
+  color_palette:
+    primary: ["#004D3F", "#00382D"]   # verde dominante de la marca
+    accent: ["#E6B373"]               # dorado, SOLO acento
+    background: "#FCF1EA"             # marfil
+    text: "#004D3F"
+    muted: "#7A8B84"                  # REVISAR: derivado del verde, no documentado
+  composition: >
+    Vertical 9:16. Cierre estándar SOBRE el hero, nunca tarjeta aparte:
+    logo y rokeah.com en y 1180-1400, base del frasco por encima del 60% de la altura.
+  texture: "metraje real sin filtros pesados; LUT de la casa, sin grano añadido"
+
+typography:
+  headings:
+    font: "Playfair Display"
+    weight: 700
+    tracking: "-0.01em"
+  body:
+    font: "Jost"
+    weight: 400
+    line_height: 1.5
+  code:
+    font: "Jost"
+    weight: 400
+  weight_matrix:
+    title: 700
+    heading: 700
+    body: 400
+    caption: 500
+
+motion:
+  transitions: ["cut"]
+  animation_style: >
+    Cámara alternando push-in y pull-back al 9% entre planos consecutivos.
+    NO zoom-in/zoom-out mecánico. Regla 4 de la Receta v11.
+  pacing_rules:
+    min_scene_hold_seconds: 2.0
+    max_scene_hold_seconds: 6.0
+    text_card_hold_seconds: 3.0
+    stat_card_hold_seconds: 3.0
+    transition_duration_seconds: 0.2   # corte seco: los cortes caen en silencios del habla
+  entrance: "el plano ya está en movimiento cuando entra; nunca arranca congelado"
+  exit: "corta en un silencio real entre palabras, jamás partiendo una palabra"
+
+audio:
+  voice_style: "narración clara y sin urgencia; enseña, no vende"
+  music_mood: "cama discreta bajo la voz; nunca protagonista"
+  music_volume: 0.20                  # REVISAR: no hay dB documentado para ROKEAH
+  sfx_style: "unos 5 efectos por pieza, colocados en tiempos fuertes. No uno por corte."
+  ducking_threshold_db: 0             # 🔴 el ducking de audio_mixer está ROTO: mezclar sin él
+  voice_variation_allowed: false
+
+asset_generation:
+  # 🔴 LA REGLA 1 DE LA RECETA, EN EL CAMPO QUE UNA ETAPA DE GENERACIÓN LEE
+  image_prompt_prefix: >
+    NO GENERAR IMAGEN NI VIDEO CON IA. Regla 1 de la Receta v11: metraje real en
+    cada plano, sin excepción. Cero assets generados. Una imagen fija NUNCA es la
+    capa base de un plano; puede aparecer como recurso puntual. El metraje sale de
+    Pexels; los objetos concretos (un lote, una caja, un frasco) de las fotos propias.
+    No es coste: es CREDIBILIDAD. Una pieza que enseña a no dejarse engañar,
+    ilustrada con imágenes generadas, se desmiente sola.
+  image_negative_prompt: "no aplica: no se genera imagen en las piezas educativas"
+  diagram_style: "no aplica"
+  consistency_anchors:
+    - "cierre estándar sobre el hero, idéntico en todas las piezas"
+    - "verde dominante, dorado solo como acento"
+  multi_image_per_scene: false
+
+quality_rules:
+  - "Metraje real en cada plano. Cero IA en la imagen. Regla 1 de la Receta v11."
+  - "Medir el movimiento por diferencia de píxeles ANTES de renderizar: 35-74 vale, cerca de 0 se sustituye. No se discute si se ve movido: se mide."
+  - "Cada corte cae en un silencio real del habla y lleva escrita su razón. Si un corte no tiene razón, sobra."
+  - "Cámara alternando push-in/pull-back al 9%, nunca zoom mecánico."
+  - "Unos 5 efectos de sonido por pieza, en tiempos fuertes."
+  - "🔴 Las piezas educativas NO llevan CTA de venta: ni producto, ni precio, ni rokeah.com. Su única llamada es la pregunta final."
+  - "Un subtítulo nunca se parte en dos líneas."
+  - "La duración la pone la idea, no el reloj. Afirmación, por qué, qué cambia y la prueba. Prohibido enunciar el dato y saltar al cierre."
+  - "🔴 Nunca decir «sourced from authorized distributors» ni afirmar que somos distribuidor autorizado."
+  - "Nunca afirmar que un perfume nuestro es o clona un designer nombrándolo."
+  - "El precio de envío se consulta en Shopify EL MISMO DÍA de publicar. Ya salieron 4 captions con hasta $8 de desfase."
+  - "Los logos se reencuadran y escalan entre colorways oficiales, pero NUNCA se regeneran ni se alteran con IA."
+  - "Copiar el montaje de la ÚLTIMA pieza aprobada, no de una plantilla. La lección de punto-ciego."
