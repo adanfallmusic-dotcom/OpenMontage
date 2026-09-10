@@ -1,0 +1,110 @@
+# AYEF — canal devocional cristiano en español.
+#
+# Todo lo de aquí sale de ~/.claude/reels-proyectos/ayef.md y de ~/Documents/ayef-marca.
+# NADA está inventado. Lo que no estaba documentado va marcado con REVISAR.
+#
+# 🔴 REGLA QUE MANDA SOBRE TODAS: en AYEF la IMAGEN nunca es generada por IA.
+#    Metraje real de archivo gratuito, siempre. El AUDIO sí es IA (música, voz, efectos).
+#    Ver asset_generation.image_prompt_prefix más abajo.
+
+identity:
+  name: "AYEF"
+  category: cinematic
+  mood: "sereno, cálido, cercano; nunca regaña al que mira"
+  pace: slow
+  best_for: "Piezas devocionales de 59-175 s sobre metraje real, con tipografía cinética y voz pausada"
+
+visual_language:
+  color_palette:
+    # ficha AYEF, sección Identidad: ámbar #EF9F27/#BA7517 · crema #FAEEDA · carbón #14130F
+    primary: ["#BA7517", "#8A5A12"]
+    accent: ["#EF9F27"]          # la palabra activa del subtítulo karaoke
+    background: "#14130F"        # carbón
+    text: "#FAEEDA"              # crema
+    muted: "#A29A8B"             # REVISAR: derivado de la crema, no documentado en la marca
+  composition: >
+    Vertical 9:16. Zona segura real x 184-896 · y 380-1420; el texto de placa empieza
+    en y>=490. La firma va abajo a la izquierda, FUERA de la zona segura, a propósito.
+  texture: "grado ámbar fijo (fórmula reel-01), sin grano añadido; B&W solo para duelo"
+
+typography:
+  headings:
+    font: "Georgia"
+    weight: 700
+    tracking: "0"
+  body:
+    font: "Georgia"
+    weight: 400
+    line_height: 1.45
+  code:
+    font: "Georgia"              # AYEF no muestra código; se declara para no dejarlo vacío
+    weight: 400
+  weight_matrix:
+    title: 700
+    heading: 700
+    body: 400
+    caption: 700
+
+motion:
+  transitions: ["cut", "fade"]
+  animation_style: >
+    Tipografía cinética sobre B-roll sutil. En los cortes van colas de ambiente,
+    NUNCA whooshes. Los títulos entran en SILENCIO (regla del 4-sep-2026).
+  pacing_rules:
+    min_scene_hold_seconds: 2.5
+    max_scene_hold_seconds: 8.0
+    text_card_hold_seconds: 3.5
+    stat_card_hold_seconds: 3.5
+    transition_duration_seconds: 0.6
+  entrance: "aparece desde la quietud, sin golpe; el movimiento acompaña a la voz, no la adelanta"
+  exit: "se retira antes de que la frase termine de asentarse; nunca corta en seco sobre una palabra"
+
+audio:
+  voice_style: >
+    Manuel (ElevenLabs SYJGdd62L3imfzgTqyem, eleven_v3): 120 Hz, 3,21 palabras/s,
+    48,6% de silencio. Voz pausada, grave, sin urgencia.
+  music_mood: >
+    Generada con IA a la medida de cada pieza (ElevenLabs Music). Seis direcciones
+    aprobadas conviven -cuerdas de lamento, piano protagonista, guitarra y cuerdas,
+    dórico con luz-, pero el núcleo NO cambia: misma tonalidad (re), mismos recursos,
+    misma familia de instrumentos. La cama deja libre la banda 1-4 kHz (las consonantes).
+    🔴 PIXABAY DESCARTADO como fuente: Content ID bloqueó una pieza en todo el mundo.
+  music_volume: 0.22            # -13 dB. Lecho -36 dB. Colas de ambiente -17 dB en cortes.
+  sfx_style: >
+    Sin whooshes. Un suceso musical en el fotograma 1 (moderado, no un golpe) que cambia
+    en cada pieza. La FIRMA del canal -gesto lento y descendente, 1-3 s, entrada en fade,
+    cola larga- suena UNA vez por pieza, en el silencio tras «Amados ayefim. Descansad.»,
+    sobre la tarjeta de cierre. La firma NO cambia nunca: se reconoce por timbre.
+  ducking_threshold_db: 0       # 🔴 AYEF mezcla SIN ducking. El de audio_mixer además está roto.
+  voice_variation_allowed: false
+  hero_moment_voice_shift: "ninguno: la voz no cambia de registro dentro de una pieza"
+  transition_voice_shift: "ninguno"
+
+asset_generation:
+  # 🔴 LA REGLA MÁS IMPORTANTE DE ESTE PLAYBOOK
+  image_prompt_prefix: >
+    NO GENERAR IMAGEN. En AYEF el metraje es SIEMPRE real y de archivo gratuito.
+    Si una etapa pide generar imagen o vídeo con IA, se para y se avisa: rompe la
+    identidad del canal. El audio sí se genera (música, voz, efectos).
+  image_negative_prompt: "no aplica: no se genera imagen en este canal"
+  diagram_style: "no aplica: AYEF no usa diagramas"
+  consistency_anchors:
+    - "grado ámbar fijo, idéntico en todas las piezas"
+    - "placas de carbón con llama y filetes"
+    - "subtítulos karaoke con la palabra activa en ámbar"
+    - "tarjeta de cierre idéntica en todas las piezas"
+  multi_image_per_scene: false
+
+quality_rules:
+  - "Cero IA en la imagen. El metraje es real o la pieza no sale."
+  - "Un solo matiz por pieza. Si hay dos ideas, son dos piezas."
+  - "Jamás regañar al espectador."
+  - "Máster a -14 LUFS / TP <= -1.2. Las redes solo bajan volumen, nunca suben."
+  - "Los títulos entran en silencio. Los SFX sobre título fueron oídos y rechazados por el dueño."
+  - "La pieza empieza sonando: la música ya está antes de la primera palabra."
+  - "La firma suena una vez, al final, sobre la tarjeta de cierre. Nunca en la cabecera."
+  - "Prueba del recuerdo antes de aprobar la mezcla: oír la pieza, esperar 10 minutos e intentar repetir la frase-eje en voz alta. Si no sale entera, la música baja 3 dB."
+  - "Marcar la casilla de contenido generado con IA en YouTube y TikTok, por la música."
+  - "Ningún audio nuestro sin el sufijo -ayef en el nombre. Un audio sin sufijo NO es nuestro."
+  - "No repetir pista musical en piezas seguidas: distancia mínima de 6 piezas."
+  - "Cada pieza deja su pista en <pieza>/musica/ y queda anotada en registro-musica.json."
