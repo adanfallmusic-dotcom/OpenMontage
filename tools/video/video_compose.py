@@ -1262,6 +1262,35 @@ class VideoCompose(BaseTool):
         }
 
     @staticmethod
+    def _pick_caption_bar(text_hex: str, bg_hex: str) -> str:
+        """Choose the caption bar that keeps the caption text legible.
+
+        Returns the light bar or the dark one, whichever gives `text_hex` the
+        higher WCAG contrast ratio once composited over the composition
+        background. Falls back to the dark bar if a color cannot be parsed.
+        """
+        from styles.playbook_loader import validate_contrast
+
+        light, dark = "rgba(255, 255, 255, 0.85)", "rgba(15, 23, 42, 0.75)"
+        # Composite each candidate over the background at its own alpha.
+        try:
+            bg = bg_hex.lstrip("#")
+            br, bgr, bb = (int(bg[i:i + 2], 16) for i in (0, 2, 4))
+
+            def over(r: int, g: int, b: int, a: float) -> str:
+                return "#%02X%02X%02X" % (
+                    round(r * a + br * (1 - a)),
+                    round(g * a + bgr * (1 - a)),
+                    round(b * a + bb * (1 - a)),
+                )
+
+            on_light = validate_contrast(text_hex, over(255, 255, 255, 0.85))["ratio"]
+            on_dark = validate_contrast(text_hex, over(15, 23, 42, 0.75))["ratio"]
+        except (ValueError, KeyError, IndexError, TypeError):
+            return dark
+        return light if on_light >= on_dark else dark
+
+    @staticmethod
     def _build_theme_from_playbook(
         playbook_name: str | None,
         composition_data: dict | None,
@@ -1333,11 +1362,13 @@ class VideoCompose(BaseTool):
 
             # Derive caption colors from the palette
             theme["captionHighlightColor"] = primary
-            # Caption background: semi-transparent version of the bg color
-            theme["captionBackgroundColor"] = (
-                f"rgba(255, 255, 255, 0.85)" if bg.upper() in ("#FFFFFF", "#FAFAFA", "#F9FAFB")
-                else f"rgba(15, 23, 42, 0.75)"
-            )
+            # Caption background: pick the bar the caption text can actually be
+            # read on, by measuring contrast — not by matching the background
+            # against a list of three exact hex values. That list only covered
+            # the shipped playbooks: a brand whose light background is its own
+            # cream (ROKEAH's ivory #FCF1EA) fell through to the dark bar and
+            # put its dark text on it at 1.19:1, far below WCAG AA.
+            theme["captionBackgroundColor"] = VideoCompose._pick_caption_bar(text, bg)
 
             # Motion style from playbook. `pace` is an identity field in the
             # playbook schema; motion carries pacing_rules, not a pace enum.
