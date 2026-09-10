@@ -20,9 +20,8 @@ touched here.
 from pathlib import Path
 
 import pytest
-import yaml
 
-from styles.playbook_loader import list_playbooks
+from styles.playbook_loader import list_playbooks, load_playbook
 from tools.video.video_compose import VideoCompose
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -32,7 +31,11 @@ PLAYBOOK_NAMES = sorted(list_playbooks())
 
 
 def _raw(name: str) -> dict:
-    return yaml.safe_load((STYLES_DIR / f"{name}.yaml").read_text(encoding="utf-8"))
+    # Use the loader, not a hand-built path: list_playbooks() also returns
+    # playbooks from styles/custom/, and building STYLES_DIR / f"{name}.yaml"
+    # by hand cannot find those — any custom playbook broke this whole module
+    # with FileNotFoundError.
+    return load_playbook(name)
 
 
 def _theme(name: str) -> dict:
